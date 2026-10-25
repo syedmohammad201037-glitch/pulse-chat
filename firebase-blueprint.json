@@ -1,0 +1,185 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User account and status stored in Firestore",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique user ID" },
+        "displayName": { "type": "string", "description": "Readable display name" },
+        "email": { "type": "string", "description": "User email address" },
+        "photoURL": { "type": "string", "description": "Profile picture URL" },
+        "online": { "type": "boolean", "description": "True if user is currently online" },
+        "lastSeen": { "type": "string", "format": "date-time", "description": "Timestamp of the last online activity" },
+        "bio": { "type": "string", "description": "Short bio or summary" },
+        "statusEmoji": { "type": "string", "description": "Status emoji" },
+        "statusText": { "type": "string", "description": "Status description" },
+        "accentColor": { "type": "string", "description": "Selected theme accent" },
+        "customWallpaper": { "type": "string", "description": "Selected wallpaper" },
+        "enableSounds": { "type": "boolean", "description": "Audio chimes toggle" }
+      },
+      "required": ["uid", "displayName"]
+    },
+    "Chat": {
+      "title": "Chat Metadata",
+      "description": "One-to-one or group chat meta and state",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique chat thread ID" },
+        "participants": { "type": "array", "description": "Array of participant user IDs" },
+        "isGroup": { "type": "boolean", "description": "True for group chats" },
+        "groupName": { "type": "string", "description": "Display name of group" },
+        "groupAdmin": { "type": "string", "description": "UID of group creator" },
+        "groupAvatar": { "type": "string", "description": "Group avatar URL" },
+        "typing": { "type": "object", "description": "Mapping of userId to boolean typing states" },
+        "unreadCount": { "type": "object", "description": "Mapping of userId to count of unread messages" },
+        "lastMessage": { "type": "object", "description": "Details of the last text message sent" },
+        "pinnedMessageIds": { "type": "array", "description": "Array of pinned message IDs" },
+        "settings": { "type": "object", "description": "Group configuration settings" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["id", "participants"]
+    },
+    "Message": {
+      "title": "Private Message",
+      "description": "Individual message document in a chat's messages subcollection",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique message ID generated" },
+        "senderId": { "type": "string", "description": "User ID of the sender" },
+        "receiverId": { "type": "string", "description": "User ID of the receiver" },
+        "text": { "type": "string", "description": "Message text contents" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Server timestamp when sent" },
+        "edited": { "type": "boolean", "description": "True if the message was altered" },
+        "seen": { "type": "boolean", "description": "True if receiver opened the message" },
+        "pollData": { "type": "object", "description": "Interactive poll information" },
+        "voiceNote": { "type": "object", "description": "Audio recording meta" },
+        "disappearingAt": { "type": "number", "description": "Expiry timestamp for auto-deletion" },
+        "replyTo": { "type": "object", "description": "Referenced reply message" },
+        "reactions": { "type": "object", "description": "User emoji reaction mapping" },
+        "starredBy": { "type": "array", "description": "User IDs who marked message as favorite" },
+        "forwarded": { "type": "boolean", "description": "True if message was forwarded" }
+      },
+      "required": ["id", "senderId", "text"]
+    },
+    "Call": {
+      "title": "Call Handshake",
+      "description": "Call metadata and SDP handshake variables for WebRTC calling",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Session ID for the call" },
+        "callerId": { "type": "string", "description": "Caller user ID" },
+        "callerName": { "type": "string", "description": "Caller display name at time of call" },
+        "callerPhoto": { "type": "string", "description": "Caller photo URL at time of call" },
+        "receiverId": { "type": "string", "description": "Receiver user ID" },
+        "type": { "type": "string", "enum": ["voice", "video"], "description": "Media stream mode" },
+        "status": { "type": "string", "enum": ["ringing", "accepted", "rejected", "ended"], "description": "Active state transitions" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Call initiation timestamp" },
+        "offer": { "type": "object", "description": "WebRTC SDP offer maps" },
+        "answer": { "type": "object", "description": "WebRTC SDP answer maps" }
+      },
+      "required": ["id", "callerId", "receiverId", "type", "status"]
+    },
+    "IceCandidate": {
+      "title": "ICE Candidate Object",
+      "description": "WebRTC network candidates stored as documents under call subcollections",
+      "type": "object",
+      "properties": {
+        "candidate": { "type": "string" },
+        "sdpMid": { "type": "string" },
+        "sdpMLineIndex": { "type": "number" },
+        "usernameFragment": { "type": "string" }
+      }
+    },
+    "FriendRequest": {
+      "title": "Friend Request",
+      "description": "Invitation between two users to connect",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Combined sorted user IDs (uid1_uid2)" },
+        "senderId": { "type": "string", "description": "UID of sender" },
+        "receiverId": { "type": "string", "description": "UID of receiver" },
+        "participants": { "type": "array", "description": "Array containing [senderId, receiverId]" },
+        "status": { "type": "string", "enum": ["pending", "accepted"], "description": "Status of the connection" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Timestamp when requested" }
+      },
+      "required": ["id", "senderId", "receiverId", "status"]
+    },
+    "CallLog": {
+      "title": "Call History Log",
+      "description": "Call session history record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Call session ID" },
+        "callerId": { "type": "string" },
+        "callerName": { "type": "string" },
+        "callerPhoto": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "receiverName": { "type": "string" },
+        "receiverPhoto": { "type": "string" },
+        "type": { "type": "string", "enum": ["voice", "video"] },
+        "status": { "type": "string" },
+        "duration": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "participants": { "type": "array" }
+      },
+      "required": ["id", "callerId", "receiverId", "type", "status"]
+    },
+    "Story": {
+      "title": "User Story / Status",
+      "description": "24-hour status update posted by a user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Story document ID" },
+        "userId": { "type": "string", "description": "UID of author" },
+        "userName": { "type": "string", "description": "Author display name" },
+        "userPhoto": { "type": "string", "description": "Author avatar URL" },
+        "text": { "type": "string", "description": "Text status caption" },
+        "mediaUrl": { "type": "string", "description": "Optional story media URL" },
+        "color": { "type": "string", "description": "Background gradient preset" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Post timestamp" },
+        "expiresAt": { "type": "number", "description": "Expiration timestamp in epoch ms" },
+        "viewers": { "type": "array", "description": "List of user IDs who viewed" }
+      },
+      "required": ["id", "userId"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Stores user profiles, availability, and last active records"
+    },
+    "chats/{chatId}": {
+      "schema": "Chat",
+      "description": "Stores active thread data for direct and group chats"
+    },
+    "chats/{chatId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Subcollection to hold the text history of a specific chat"
+    },
+    "calls/{callId}": {
+      "schema": "Call",
+      "description": "Signaling documents to coordinate active RTCPeerConnection channels"
+    },
+    "calls/{callId}/callerCandidates/{candidateId}": {
+      "schema": "IceCandidate",
+      "description": "ICE network configurations pushed by the call initiator"
+    },
+    "calls/{callId}/receiverCandidates/{candidateId}": {
+      "schema": "IceCandidate",
+      "description": "ICE network configurations pushed by the recipient"
+    },
+    "friendRequests/{requestId}": {
+      "schema": "FriendRequest",
+      "description": "Friend requests sent between users"
+    },
+    "callLogs/{callLogId}": {
+      "schema": "CallLog",
+      "description": "Call history records for both participants"
+    },
+    "stories/{storyId}": {
+      "schema": "Story",
+      "description": "Stores temporary user stories/status updates"
+    }
+  }
+}

@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@layer base {
+  *,
+  *::before,
+  *::after,
+  html,
+  body,
+  input,
+  textarea,
+  select,
+  button {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    letter-spacing: -0.01em;
+  }
+}
+
+.font-sans, .font-heading {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+}
+
+@layer utilities {
+  .break-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* GPU accelerated rendering for buttery smooth 60/120fps interactions without lag */
+  .transform-gpu {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform, opacity;
+  }
+
+  /* Custom scrollbar for modern WhatsApp web feel */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(109, 66, 199, 0.15);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(109, 66, 199, 0.3);
+  }
+}
+
+
+/* ================= Graphics modes (html[data-graphics]) ================= */
+
+/* BALANCED: keep animations, drop the heavy decorative glows and cap blur */
+html[data-graphics="balanced"] [class^="blur-"],
+html[data-graphics="balanced"] [class*=" blur-"] {
+  display: none !important;
+}
+
+/* POTATO: flat, instant, no blur / glow / shadow / motion. Built for weak PCs. */
+html[data-graphics="potato"] *,
+html[data-graphics="potato"] *::before,
+html[data-graphics="potato"] *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  transition: none !important;
+  will-change: auto !important;
+  scroll-behavior: auto !important;
+}
+html[data-graphics="potato"] *:not(.animate-spin),
+html[data-graphics="potato"] *:not(.animate-spin)::before,
+html[data-graphics="potato"] *:not(.animate-spin)::after {
+  animation: none !important; /* loading spinners keep spinning */
+}
+html[data-graphics="potato"] [class^="blur-"],
+html[data-graphics="potato"] [class*=" blur-"] {
+  display: none !important;
+}
+html[data-graphics="potato"] .transform-gpu {
+  transform: none !important;
+  perspective: none !important;
+}

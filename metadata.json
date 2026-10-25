@@ -1,0 +1,11 @@
+{
+  "name": "Pulse Messenger & AI Studio",
+  "description": "Ultra-fast, end-to-end encrypted real-time chat with Pulse AI Co-pilot, 4K voice & video calling, 24h stories, voice note studio, and intelligent smart messaging.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
